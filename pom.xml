@@ -75,8 +75,6 @@
 		<!-- Managed dependency versions -->
 		<commons-cli.version>1.2</commons-cli.version>
 		<commons-lang.version>2.6</commons-lang.version>
-		<slf4j.version>1.7.2</slf4j.version>
-		<logback.version>1.0.9</logback.version>
 		<testng.version>6.8</testng.version>
 
 		<!-- Plugin versions -->
@@ -90,18 +88,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
