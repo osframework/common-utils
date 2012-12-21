@@ -9,17 +9,17 @@ import org.testng.annotations.DataProvider;
 
 public class EqualsUtilTest {
 
-	@Test(dataProvider = "dp")
+	@Test(groups = "general", dataProvider = "dp")
 	public void testAreEqualBoolean(boolean b1, boolean b2, boolean check) {
 		assertEquals(EqualsUtil.areEqual(b1, b2), check);
 	}
 
-	@Test(dataProvider = "dp")
+	@Test(groups = "general", dataProvider = "dp")
 	public void testAreEqualChar(char c1, char c2, boolean check) {
 		assertEquals(EqualsUtil.areEqual(c1, c2), check);
 	}
 
-	@Test(dataProvider = "dp")
+	@Test(groups = "general", dataProvider = "dp")
 	public void testAreEqualLong(long l1, long l2, boolean check) {
 		assertEquals(EqualsUtil.areEqual(l1, l2), check);
 	}
