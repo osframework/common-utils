@@ -211,31 +211,27 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 		}
 	
 		public boolean hasNext() {
-			boolean hasNext = true;
-			if (null == nextName) {
-				hasNext = false;
-			} else {
-				if (null == configs) {
-					try {
-						final String fullName = PREFIX + serviceClass.getName();
-						configs = (null == loader)
-								   ? ClassLoader.getSystemResources(fullName)
-								   : loader.getResources(fullName);
-					} catch (IOException ioe) {
-						fail(serviceClass, "Error locating configuration files", ioe);
-					}
-				}
-				while ((null == pending) || !pending.hasNext()) {
-					if (!configs.hasMoreElements()) {
-						hasNext = false;
-						break;
-					} else {
-						pending = parse(serviceClass, configs.nextElement());
-					}
-				}
-				nextName = (hasNext) ? pending.next() : null;
+			if (null != nextName) {
+				return true;
 			}
-			return hasNext;
+			if (null == configs) {
+				try {
+					String fullName = PREFIX + serviceClass.getName();
+					configs = (null == loader)
+							   ? ClassLoader.getSystemResources(fullName)
+							   : loader.getResources(fullName);
+				} catch (IOException ioe) {
+					fail(serviceClass, "Error locating configuration files", ioe);
+				}
+			}
+			while ((null == pending) || !pending.hasNext()) {
+				if (!configs.hasMoreElements()) {
+					return false;
+				}
+				pending = parse(serviceClass, configs.nextElement());
+			}
+			nextName = pending.next();
+			return true;
 		}
 	
 		public Class<? extends S> next() {
