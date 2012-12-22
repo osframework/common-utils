@@ -55,6 +55,10 @@ public final class EqualsUtil {
 		return (aThis == aThat);
 	}
 
+	public static boolean areEqual(final int aThis, final int aThat) {
+		return (aThis == aThat);
+	}
+
 	public static boolean areEqual(final long aThis, final long aThat) {
 		return (aThis == aThat);
 	}
