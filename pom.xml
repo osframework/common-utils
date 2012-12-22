@@ -69,8 +69,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.javaVersion>1.6</project.build.javaVersion>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-		<build.timestamp>${maven.build.timestamp}</build.timestamp>
-
+		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 
 		<!-- Managed dependency versions -->
 		<testng.version>6.8</testng.version>
@@ -81,6 +80,8 @@
 		<maven-pmd-plugin.version>2.7.1</maven-pmd-plugin.version>
 		<buildnumber-maven-plugin.version>1.2</buildnumber-maven-plugin.version>
 		<maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
 		<maven-failsafe-plugin.version>2.12.4</maven-failsafe-plugin.version>
 		<maven-deploy-plugin.version>2.7</maven-deploy-plugin.version>
 		<wagon-webdav-jackrabbit.version>2.2</wagon-webdav-jackrabbit.version>
@@ -155,8 +156,40 @@
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${buildNumber}</Implementation-Build>
+							<Build-Date>${buildTimestamp}</Build-Date>
+						</manifestEntries>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-javadoc</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
