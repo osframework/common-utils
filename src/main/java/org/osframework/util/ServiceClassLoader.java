@@ -46,28 +46,28 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 
 	private static final String PREFIX = "META-INF/services/";
 
-	private Class<S> serviceClass;
-	private ClassLoader loader;
-	private LinkedHashMap<String, Class<? extends S>> providerClasses = new LinkedHashMap<String, Class<? extends S>>();
+	private final transient Class<S> serviceClass;
+	private final transient ClassLoader loader;
+	private final transient Map<String, Class<? extends S>> providerClasses = new LinkedHashMap<String, Class<? extends S>>();
 
 	// The current lazy-lookup iterator
-    private LazyIterator lookupIterator;
+    private transient LazyIterator lookupIterator;
 
-	public static <S> ServiceClassLoader<S> load(Class<S> serviceClass, ClassLoader loader) {
+	public static <S> ServiceClassLoader<S> load(final Class<S> serviceClass, final ClassLoader loader) {
 		return new ServiceClassLoader<S>(serviceClass, loader);
 	}
 
-	public static <S> ServiceClassLoader<S> load(Class<S> serviceClass) {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		return ServiceClassLoader.load(serviceClass, cl);
+	public static <S> ServiceClassLoader<S> load(final Class<S> serviceClass) {
+		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		return ServiceClassLoader.load(serviceClass, loader);
 	}
 
-	public static <S> ServiceClassLoader<S> loadInstalled(Class<S> serviceClass) {
-		ClassLoader cl = ClassLoader.getSystemClassLoader();
+	public static <S> ServiceClassLoader<S> loadInstalled(final Class<S> serviceClass) {
+		ClassLoader loader = ClassLoader.getSystemClassLoader();
 		ClassLoader prev = null;
-		while (null != cl) {
-			prev = cl;
-			cl = cl.getParent();
+		while (null != loader) {
+			prev = loader;
+			loader = loader.getParent();
 		}
 		return ServiceClassLoader.load(serviceClass, prev);
 	}
@@ -80,18 +80,18 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 	public Iterator<Class<? extends S>> iterator() {
 		// TODO Auto-generated method stub
 		return new Iterator<Class<? extends S>>() {
-			Iterator<Map.Entry<String, Class<? extends S>>> knownProviderClasses = providerClasses.entrySet().iterator();
+			Iterator<Map.Entry<String, Class<? extends S>>> knownIt = providerClasses.entrySet().iterator();
 		
 			public boolean hasNext() {
-				if (knownProviderClasses.hasNext()) {
+				if (knownIt.hasNext()) {
 					return true;
 				}
 				return lookupIterator.hasNext();
 			}
 		
 			public Class<? extends S> next() {
-				if (knownProviderClasses.hasNext()) {
-					return knownProviderClasses.next().getValue();
+				if (knownIt.hasNext()) {
+					return knownIt.next().getValue();
 				}
 				return lookupIterator.next();
 			}
@@ -104,81 +104,92 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 
 	@Override
 	public String toString() {
-		StringBuilder buf = new StringBuilder("org.osframework.util.ServiceClassLoader[")
-		                        .append(serviceClass.getName())
-		                        .append("]");
+		final StringBuilder buf = new StringBuilder("org.osframework.util.ServiceClassLoader[")
+		                              .append(serviceClass.getName())
+		                              .append("]");
 		return buf.toString();
 	}
 
-    private static void fail(Class<?> service, String msg, Throwable cause)
+    private static void fail(final Class<?> service, final String msg, final Throwable cause)
     	throws ServiceConfigurationError {
     	throw new ServiceConfigurationError(service.getName() + ": " + msg, cause);
     }
 
-    private static void fail(Class<?> service, String msg)
+    private static void fail(final Class<?> service, final String msg)
     	throws ServiceConfigurationError {
     	throw new ServiceConfigurationError(service.getName() + ": " + msg);
     }
 
-    private static void fail(Class<?> service, URL u, int line, String msg)
+    private static void fail(final Class<?> service, final URL url, final int line, final String msg)
     	throws ServiceConfigurationError {
-    	fail(service, u + ":" + line + ": " + msg);
+    	fail(service, url + ":" + line + ": " + msg);
     }
 
-	private ServiceClassLoader(Class<S> serviceClass, ClassLoader loader) {
+	private ServiceClassLoader(final Class<S> serviceClass, final ClassLoader loader) {
 		this.serviceClass = serviceClass;
 		this.loader = loader;
 		this.reload();
 	}
 
-	private int parseLine(Class<S> serviceClass, URL u, BufferedReader r, int lc, List<String> names)
+	private int parseLine(final Class<S> serviceClass, final URL url, final BufferedReader reader, final int lineNum, final List<String> names)
 		throws IOException, ServiceConfigurationError {
-		String ln = r.readLine();
-		if (null == ln) {
-		    return -1;
-		}
-		// Read everything on line prior to start of comment
-		int ci = ln.indexOf('#');
-		if (0 <= ci) ln = ln.substring(0, ci);
-		ln = ln.trim();
-		int n = ln.length();
-		if (0 != n) {
-			if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0)) {
-				fail(serviceClass, u, lc, "Illegal configuration-file syntax");
+		String line = reader.readLine();
+		int nextLineNum;
+		if (null == line) {
+		    nextLineNum = -1;
+		} else {
+			// Read everything on line prior to start of comment
+			final int commentIdx = line.indexOf('#');
+			if (0 <= commentIdx) {
+				line = line.substring(0, commentIdx);
 			}
-			int cp = ln.codePointAt(0);
-			if (!Character.isJavaIdentifierStart(cp)) {
-				fail(serviceClass, u, lc, "Illegal provider-class name: " + ln);
-			}
-			for (int i = Character.charCount(cp); i < n; i += Character.charCount(cp)) {
-				cp = ln.codePointAt(i);
-				if (!Character.isJavaIdentifierPart(cp) && ('.' != cp)) {
-					fail(serviceClass, u, lc, "Illegal provider-class name: " + ln);
+			line = line.trim();
+			final int lineLength = line.length();
+			if (0 != lineLength) {
+				if ((line.indexOf(' ') >= 0) || (line.indexOf('\t') >= 0)) {
+					fail(serviceClass, url, lineNum, "Illegal configuration-file syntax");
+				}
+				int codePt = line.codePointAt(0);
+				if (!Character.isJavaIdentifierStart(codePt)) {
+					fail(serviceClass, url, lineNum, "Illegal provider-class name: " + line);
+				}
+				for (int i = Character.charCount(codePt); i < lineLength; i += Character.charCount(codePt)) {
+					codePt = line.codePointAt(i);
+					if (!Character.isJavaIdentifierPart(codePt) && ('.' != codePt)) {
+						fail(serviceClass, url, lineNum, "Illegal provider-class name: " + line);
+					}
+				}
+				if (!providerClasses.containsKey(line) && !names.contains(line)) {
+					names.add(line);
 				}
 			}
-			if (!providerClasses.containsKey(ln) && !names.contains(ln)) {
-				names.add(ln);
-			}
+			nextLineNum = lineNum + 1;
 		}
-		return lc + 1;
+		return nextLineNum;
 	}
 
-	private Iterator<String> parse(Class<S> serviceClass, URL u)
+	private Iterator<String> parse(final Class<S> serviceClass, final URL url)
 		throws ServiceConfigurationError {
-		InputStream in = null;
-		BufferedReader r = null;
-		ArrayList<String> names = new ArrayList<String>();
+		InputStream inStream = null;
+		BufferedReader reader = null;
+		final ArrayList<String> names = new ArrayList<String>();
 		try {
-			in = u.openStream();
-			r = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
-			int lc = 1;
-			while ((lc = parseLine(serviceClass, u, r, lc, names)) >= 0);
+			inStream = url.openStream();
+			reader = new BufferedReader(new InputStreamReader(inStream, Charset.forName("UTF-8")));
+			int lineNum = 1;
+			do {
+				lineNum = parseLine(serviceClass, url, reader, lineNum, names);
+			} while (0 <= lineNum);
 		} catch (IOException ioe) {
 			fail(serviceClass, "Error reading configuration file", ioe);
 		} finally {
 			try {
-				if (null != r) r.close();
-				if (null != in) in.close();
+				if (null != reader) {
+					reader.close();
+				}
+				if (null != inStream) {
+					inStream.close();
+				}
 			} catch (IOException ioe) {
 				fail(serviceClass, "Error closing configuration file", ioe);
 			}
@@ -188,24 +199,24 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 
 	private class LazyIterator implements Iterator<Class<? extends S>> {
 	
-		Class<S> serviceClass;
-		ClassLoader loader;
-		Enumeration<URL> configs = null;
-		Iterator<String> pending = null;
-		String nextName = null;
+		private final transient Class<S> serviceClass;
+		private final transient ClassLoader loader;
+		private transient Enumeration<URL> configs = null;
+		private transient Iterator<String> pending = null;
+		private transient String nextName = null;
 	
-		private LazyIterator(Class<S> serviceClass, ClassLoader loader) {
+		LazyIterator(final Class<S> serviceClass, final ClassLoader loader) {
 			this.serviceClass = serviceClass;
 			this.loader = loader;
 		}
 	
 		public boolean hasNext() {
-			if (null != nextName) {
-				return true;
-			}
-			if (null == configs) {
+			boolean hasNext = true;
+			if (null == nextName) {
+				hasNext = false;
+			} else if (null == configs) {
 				try {
-					String fullName = PREFIX + serviceClass.getName();
+					final String fullName = PREFIX + serviceClass.getName();
 					configs = (null == loader)
 							   ? ClassLoader.getSystemResources(fullName)
 							   : loader.getResources(fullName);
@@ -215,35 +226,35 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 			}
 			while ((null == pending) || !pending.hasNext()) {
 				if (!configs.hasMoreElements()) {
-					return false;
+					hasNext = false;
 				}
 				pending = parse(serviceClass, configs.nextElement());
 			}
 			nextName = pending.next();
-			return true;
+			return hasNext;
 		}
 	
 		public Class<? extends S> next() {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			String cn = nextName;
+			final String className = nextName;
 		    nextName = null;
-		    Class<?> c = null;
+		    Class<?> cls = null;
 		    try {
-		    	c = Class.forName(cn, false, loader);
+		    	cls = Class.forName(className, false, loader);
 		    } catch (ClassNotFoundException cnfe) {
-		    	fail(serviceClass, "Provider " + cn + " not found");
+		    	fail(serviceClass, "Provider " + className + " not found");
 		    }
-		    if (!serviceClass.isAssignableFrom(c)) {
-		    	fail(serviceClass, "Provider " + cn  + " not a subtype");
+		    if (!serviceClass.isAssignableFrom(cls)) {
+		    	fail(serviceClass, "Provider " + className  + " not a subtype");
 		    }
 		    try {
-			    Class<? extends S> providerClass = c.asSubclass(serviceClass);
-			    providerClasses.put(cn, providerClass);
+			    final Class<? extends S> providerClass = cls.asSubclass(serviceClass);
+			    providerClasses.put(className, providerClass);
 			    return providerClass;
-		    } catch (Throwable t) {
-		    	fail(serviceClass, "Provider " + cn + " could not be cast to subtype: " + t, t);
+		    } catch (Exception e) {
+		    	fail(serviceClass, "Provider " + className + " could not be cast to subtype: " + e, e);
 		    }
 		    // This cannot happen
 		    throw new Error();

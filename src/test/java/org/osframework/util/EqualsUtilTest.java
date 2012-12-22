@@ -1,31 +1,31 @@
 package org.osframework.util;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 
-import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 public class EqualsUtilTest {
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testAreEqualBoolean(boolean b1, boolean b2, boolean check) {
-		assertEquals(EqualsUtil.areEqual(b1, b2), check);
+	@Test(groups = "general", dataProvider = "equalityPairs")
+	public void testAreEqualBoolean(final boolean boolean1, final boolean boolean2, final boolean check) {
+		assertEquals(EqualsUtil.areEqual(boolean1, boolean2), check);
 	}
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testAreEqualChar(char c1, char c2, boolean check) {
-		assertEquals(EqualsUtil.areEqual(c1, c2), check);
+	@Test(groups = "general", dataProvider = "equalityPairs")
+	public void testAreEqualChar(final char char1, final char char2, final boolean check) {
+		assertEquals(EqualsUtil.areEqual(char1, char2), check);
 	}
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testAreEqualLong(long l1, long l2, boolean check) {
-		assertEquals(EqualsUtil.areEqual(l1, l2), check);
+	@Test(groups = "general", dataProvider = "equalityPairs")
+	public void testAreEqualLong(final long long1, final long long2, final boolean check) {
+		assertEquals(EqualsUtil.areEqual(long1, long2), check);
 	}
 
 	@DataProvider
-	public Object[][] dp(Method method) {
+	public Object[][] equalityPairs(final Method method) {
 		Object[] set1 = null, set2 = null, set3 = null, set4 = null;
 		if ("testAreEqualBoolean".equals(method.getName())) {
 			set1 = new Object[] { true, true, true };

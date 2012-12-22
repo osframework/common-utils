@@ -4,7 +4,7 @@ import org.osframework.util.DummyService;
 
 public class DummyServiceDefaultImpl implements DummyService {
 
-	private final String myClassName;
+	private final transient String myClassName;
 
 	public DummyServiceDefaultImpl() {
 		this.myClassName = this.getClass().getName();

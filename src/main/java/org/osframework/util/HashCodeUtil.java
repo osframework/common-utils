@@ -53,7 +53,7 @@ public final class HashCodeUtil {
 	 * @param boolField
 	 * @return hash value
 	 */
-	public static int hash(int seed, boolean boolField) {
+	public static int hash(final int seed, final boolean boolField) {
 		return firstTerm(seed) + (boolField ? 1 : 0);
 	}
 
@@ -64,7 +64,7 @@ public final class HashCodeUtil {
 	 * @param charField
 	 * @return hash value
 	 */
-	public static int hash(int seed, char charField) {
+	public static int hash(final int seed, final char charField) {
 		return firstTerm(seed) + (int)charField;
 	}
 
@@ -77,7 +77,7 @@ public final class HashCodeUtil {
 	 * @param intField
 	 * @return hash value
 	 */
-	public static int hash(int seed, int intField) {
+	public static int hash(final int seed, final int intField) {
 		return firstTerm(seed) + intField;
 	}
 
@@ -88,7 +88,7 @@ public final class HashCodeUtil {
 	 * @param longField
 	 * @return hash value
 	 */
-	public static int hash(int seed, long longField) {
+	public static int hash(final int seed, final long longField) {
 		return firstTerm(seed) + (int)(longField ^ (longField >>> 32));
 	}
 
@@ -99,7 +99,7 @@ public final class HashCodeUtil {
 	 * @param floatField
 	 * @return hash value
 	 */
-	public static int hash(int seed, float floatField) {
+	public static int hash(final int seed, final float floatField) {
 		return hash(seed, Float.floatToIntBits(floatField));
 	}
 
@@ -110,7 +110,7 @@ public final class HashCodeUtil {
 	 * @param doubleField
 	 * @return hash value
 	 */
-	public static int hash(int seed, double doubleField) {
+	public static int hash(final int seed, final double doubleField) {
 		return hash(seed, Double.doubleToLongBits(doubleField));
 	}
 
@@ -122,14 +122,14 @@ public final class HashCodeUtil {
 	 * @param obj object for which hash value is calculated
 	 * @return hash value
 	 */
-	public static int hash(int seed, Object obj) {
+	public static int hash(final int seed, final Object obj) {
 		int result = seed;
 		if (null == obj) {
 			result = hash(result, 0);
 		} else if (isArray(obj)) {
-			int length = Array.getLength(obj);
+			final int length = Array.getLength(obj);
 			for (int i = 0; i < length; i++) {
-				Object item = Array.get(obj, i);
+				final Object item = Array.get(obj, i);
 				// Recurse
 				result = hash(result, item);
 			}
@@ -147,11 +147,11 @@ public final class HashCodeUtil {
 	 */
 	private HashCodeUtil() {}
 
-	private static int firstTerm(int seed) {
+	private static int firstTerm(final int seed) {
 		return (ODD_PRIME_NUMBER * seed);
 	}
 
-	private static boolean isArray(Object obj) {
+	private static boolean isArray(final Object obj) {
 		return (null == obj) ? false : obj.getClass().isArray();
 	}
 

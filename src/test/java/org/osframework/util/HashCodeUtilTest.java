@@ -1,57 +1,58 @@
 package org.osframework.util;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
+@Test(groups = "general")
 public class HashCodeUtilTest {
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testHashBoolean(boolean b1, boolean b2, boolean check) {
+	@Test(dataProvider = "hashPairs")
+	public void testHashBoolean(final boolean boolean1, final boolean boolean2, final boolean check) {
 		final int seed = HashCodeUtil.SEED;
-		int h1 = HashCodeUtil.hash(seed, b1);
-		int h2 = HashCodeUtil.hash(seed, b2);
-		assertEquals((h1 == h2), check);
+		final int hash1 = HashCodeUtil.hash(seed, boolean1);
+		final int hash2 = HashCodeUtil.hash(seed, boolean2);
+		assertEquals((hash1 == hash2), check);
 	}
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testHashChar(char c1, char c2, boolean check) {
+	@Test(dataProvider = "hashPairs")
+	public void testHashChar(final char char1, final char char2, final boolean check) {
 		final int seed = HashCodeUtil.SEED;
-		int h1 = HashCodeUtil.hash(seed, c1);
-		int h2 = HashCodeUtil.hash(seed, c2);
-		assertEquals((h1 == h2), check);
+		final int hash1 = HashCodeUtil.hash(seed, char1);
+		final int hash2 = HashCodeUtil.hash(seed, char2);
+		assertEquals((hash1 == hash2), check);
 	}
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testHashDouble(double d1, double d2, boolean check) {
+	@Test(dataProvider = "hashPairs")
+	public void testHashDouble(final double double1, final double double2, final boolean check) {
 		final int seed = HashCodeUtil.SEED;
-		int h1 = HashCodeUtil.hash(seed, d1);
-		int h2 = HashCodeUtil.hash(seed, d2);
-		assertEquals((h1 == h2), check);
+		final int hash1 = HashCodeUtil.hash(seed, double1);
+		final int hash2 = HashCodeUtil.hash(seed, double2);
+		assertEquals((hash1 == hash2), check);
 	}
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testHashLong(long l1, long l2, boolean check) {
+	@Test(dataProvider = "hashPairs")
+	public void testHashLong(final long long1, final long long2, final boolean check) {
 		final int seed = HashCodeUtil.SEED;
-		int h1 = HashCodeUtil.hash(seed, l1);
-		int h2 = HashCodeUtil.hash(seed, l2);
-		assertEquals((h1 == h2), check);
+		final int hash1 = HashCodeUtil.hash(seed, long1);
+		final int hash2 = HashCodeUtil.hash(seed, long2);
+		assertEquals((hash1 == hash2), check);
 	}
 
-	@Test(groups = "general", dataProvider = "dp")
-	public void testHashObject(Object o1, Object o2, boolean check) {
+	@Test(dataProvider = "hashPairs")
+	public void testHashObject(final Object object1, final Object object2, final boolean check) {
 		final int seed = HashCodeUtil.SEED;
-		int h1 = HashCodeUtil.hash(seed, o1);
-		int h2 = HashCodeUtil.hash(seed, o2);
-		assertEquals((h1 == h2), check);
+		final int hash1 = HashCodeUtil.hash(seed, object1);
+		final int hash2 = HashCodeUtil.hash(seed, object2);
+		assertEquals((hash1 == hash2), check);
 	}
 
 	@DataProvider
-	public Object[][] dp(Method method) {
+	public Object[][] hashPairs(final Method method) {
 		Object[] set1 = null, set2 = null, set3 = null, set4 = null;
 		if ("testHashBoolean".equals(method.getName())) {
 			set1 = new Object[] { true, true, true };
@@ -74,18 +75,18 @@ public class HashCodeUtilTest {
 			set3 = new Object[] { 1000000000L, 1000000001L, false };
 			set4 = new Object[] { 1000000001L, 1000000000L, false };
 		} else if ("testHashObject".equals(method.getName())) {
-			long curTime = System.currentTimeMillis();
-			Date d1 = new Date(curTime), d2 = new Date(curTime);
-			set1 = new Object[] { d1, d2, true };
+			final long curTime = System.currentTimeMillis();
+			final Date date1 = new Date(curTime), date2 = new Date(curTime);
+			set1 = new Object[] { date1, date2, true };
 			
 			set2 = new Object[] { null, null, true };
 			
-			Date[] arr1 = new Date[] { d1, d2 }, arr2 = new Date[] { d1, d2 };
+			Date[] arr1 = new Date[] { date1, date2 }, arr2 = new Date[] { date1, date2 };
 			set3 = new Object[] { arr1, arr2, true };
 			
 			// Order of elements doesn't matter
-			arr1 = new Date[] { d1, d2 };
-			arr2 = new Date[] { d2, d1 };
+			arr1 = new Date[] { date1, date2 };
+			arr2 = new Date[] { date2, date1 };
 			set4 = new Object[] { arr1, arr2, true };
 		}
 		
