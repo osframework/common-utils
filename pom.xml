@@ -76,6 +76,7 @@
 
 		<!-- Plugin versions -->
 		<maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
 		<maven-jxr-plugin.version>2.3</maven-jxr-plugin.version>
 		<maven-pmd-plugin.version>2.7.1</maven-pmd-plugin.version>
 		<buildnumber-maven-plugin.version>1.2</buildnumber-maven-plugin.version>
@@ -148,6 +149,11 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>${maven-jar-plugin.version}</version>
 				<configuration>
@@ -193,4 +199,19 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-report-plugin.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
