@@ -78,7 +78,6 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 	}
 
 	public Iterator<Class<? extends S>> iterator() {
-		// TODO Auto-generated method stub
 		return new Iterator<Class<? extends S>>() {
 			Iterator<Map.Entry<String, Class<? extends S>>> knownIt = providerClasses.entrySet().iterator();
 		
