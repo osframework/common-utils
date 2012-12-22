@@ -34,6 +34,7 @@ import java.lang.reflect.Array;
  * }
  * </pre>
  * 
+ * @author <a href="http://www.javapractices.com/">Hirondelle Systems</a>
  * @author <a href="mailto:dave@osframework.org">Dave Joyce</a>
  */
 public final class HashCodeUtil {
@@ -140,6 +141,10 @@ public final class HashCodeUtil {
 
 	private static final int ODD_PRIME_NUMBER = 37;
 
+	/**
+	 * Private constructor - this class cannot be instantiated.
+	 *
+	 */
 	private HashCodeUtil() {}
 
 	private static int firstTerm(int seed) {

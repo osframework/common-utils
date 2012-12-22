@@ -40,33 +40,85 @@ package org.osframework.util;
  * <em>Arrays are not handled by this class</em>. This is because the
  * <code>Arrays.equals</code> methods should be used for array fields.
  * 
+ * @author <a href="http://www.javapractices.com/">Hirondelle Systems</a>
  * @author <a href="mailto:dave@osframework.org">Dave Joyce</a>
  */
 public final class EqualsUtil {
 
+	/**
+	 * Private constructor - this class cannot be instantiated.
+	 */
 	private EqualsUtil() {
 	}
 
+	/**
+	 * Determine if the given <code>boolean</code> fields are equal to each other.
+	 * 
+	 * @param aThis
+	 * @param aThat
+	 * @return <code>true</code> if the fields are equal,
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean areEqual(final boolean aThis, final boolean aThat) {
 		return (aThis == aThat);
 	}
 
+	/**
+	 * Determine if the given <code>char</code> fields are equal to each other.
+	 * 
+	 * @param aThis
+	 * @param aThat
+	 * @return <code>true</code> if the fields are equal,
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean areEqual(final char aThis, final char aThat) {
 		return (aThis == aThat);
 	}
 
+	/**
+	 * Determine if the given <code>int</code> fields are equal to each other.
+	 * 
+	 * @param aThis
+	 * @param aThat
+	 * @return <code>true</code> if the fields are equal,
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean areEqual(final int aThis, final int aThat) {
 		return (aThis == aThat);
 	}
 
+	/**
+	 * Determine if the given <code>long</code> fields are equal to each other.
+	 * 
+	 * @param aThis
+	 * @param aThat
+	 * @return <code>true</code> if the fields are equal,
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean areEqual(final long aThis, final long aThat) {
 		return (aThis == aThat);
 	}
 
+	/**
+	 * Determine if the given <code>float</code> fields are equal to each other.
+	 * 
+	 * @param aThis
+	 * @param aThat
+	 * @return <code>true</code> if the fields are equal,
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean areEqual(final float aThis, final float aThat) {
 		return (Float.floatToIntBits(aThis) == Float.floatToIntBits(aThat));
 	}
 
+	/**
+	 * Determine if the given <code>double</code> fields are equal to each other.
+	 * 
+	 * @param aThis
+	 * @param aThat
+	 * @return <code>true</code> if the fields are equal,
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean areEqual(final double aThis, final double aThat) {
 		return (Double.doubleToLongBits(aThis) == Double.doubleToLongBits(aThat));
 	}

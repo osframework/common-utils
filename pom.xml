@@ -25,8 +25,8 @@
 
 	<scm>
 		<url>https://github.com/osframework/common-utils</url>
-		<connection>git://github.com/osframework/common-utils.git</connection>
-		<developerConnection>https://github.com/osframework/common-utils.git</developerConnection>
+		<connection>scm:git:git://github.com/osframework/common-utils.git</connection>
+		<developerConnection>scm:git:https://github.com/osframework/common-utils.git</developerConnection>
 	</scm>
 
 	<ciManagement>
@@ -73,14 +73,13 @@
 
 
 		<!-- Managed dependency versions -->
-		<commons-cli.version>1.2</commons-cli.version>
-		<commons-lang.version>2.6</commons-lang.version>
 		<testng.version>6.8</testng.version>
 
 		<!-- Plugin versions -->
 		<maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
 		<maven-jxr-plugin.version>2.3</maven-jxr-plugin.version>
 		<maven-pmd-plugin.version>2.7.1</maven-pmd-plugin.version>
+		<buildnumber-maven-plugin.version>1.2</buildnumber-maven-plugin.version>
 		<maven-jar-plugin.version>2.4</maven-jar-plugin.version>
 		<maven-failsafe-plugin.version>2.12.4</maven-failsafe-plugin.version>
 		<maven-deploy-plugin.version>2.7</maven-deploy-plugin.version>
@@ -119,6 +118,24 @@
 			</extension>
 		</extensions>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>${buildnumber-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>true</doCheck>
+					<doUpdate>true</doUpdate>
+					<shortRevisionLength>10</shortRevisionLength>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
