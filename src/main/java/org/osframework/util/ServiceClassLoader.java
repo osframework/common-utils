@@ -210,27 +210,9 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 		}
 	
 		public boolean hasNext() {
-			if (null != nextName) {
-				return true;
-			}
-			if (null == configs) {
-				try {
-					String fullName = PREFIX + serviceClass.getName();
-					configs = (null == loader)
-							   ? ClassLoader.getSystemResources(fullName)
-							   : loader.getResources(fullName);
-				} catch (IOException ioe) {
-					fail(serviceClass, "Error locating configuration files", ioe);
-				}
-			}
-			while ((null == pending) || !pending.hasNext()) {
-				if (!configs.hasMoreElements()) {
-					return false;
-				}
-				pending = parse(serviceClass, configs.nextElement());
-			}
-			nextName = pending.next();
-			return true;
+			return (null == nextName)
+					? lazyLoadClassNameIterator()
+					: true;
 		}
 	
 		public Class<? extends S> next() {
@@ -261,6 +243,31 @@ public final class ServiceClassLoader<S> implements Iterable<Class<? extends S>>
 	
 		public void remove() {
 			throw new UnsupportedOperationException();	
+		}
+	
+		private boolean lazyLoadClassNameIterator() {
+			if (null == configs) {
+				try {
+					final String fullName = PREFIX + serviceClass.getName();
+					configs = (null == loader)
+							   ? ClassLoader.getSystemResources(fullName)
+							   : loader.getResources(fullName);
+				} catch (IOException ioe) {
+					fail(serviceClass, "Error locating configuration files", ioe);
+				}
+			}
+			boolean hasNext = true;
+			while ((null == pending) || !pending.hasNext()) {
+				if (!configs.hasMoreElements()) {
+					hasNext = false;
+					break;
+				}
+				pending = parse(serviceClass, configs.nextElement());
+			}
+			if (hasNext) {
+				nextName = pending.next();
+			}
+			return hasNext;
 		}
 	}
 }
