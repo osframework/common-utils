@@ -139,11 +139,14 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/.empty</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>.</directory>
 				<targetPath>META-INF</targetPath>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 				<includes>
 					<include>LICENSE.txt</include>
 					<include>NOTICE.txt</include>
