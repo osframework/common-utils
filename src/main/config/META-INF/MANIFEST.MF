@@ -12,6 +12,7 @@ Bundle-Version: 1.0.0.SNAPSHOT
 Bundle-Vendor: OSFramework Project
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
 Bundle-DocURL: http://common-utils.osframework.org
-Import-Package: org.apache.commons.lang;version="[2.6,3)"
+Import-Package: org.apache.commons.lang;version="2.6",org.joda.time;ve
+ rsion="2.1",org.joda.time.format;version="2.1"
 Export-Package: org.osframework.util;version="0.0.3.SNAPSHOT"
 
