@@ -1,5 +1,5 @@
-Common Utilities
-================
+${project.name} ${project.version}
+==================================
 
 General utility classes useful across OSFramework projects.
 

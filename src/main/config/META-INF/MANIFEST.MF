@@ -1,16 +1,17 @@
 Specification-Title: Common Utilities
 Specification-Vendor: OSFramework Project
-Specification-Version: 0.0.3-SNAPSHOT
+Specification-Version: 1.0.0-SNAPSHOT
 Implementation-Title: Common Utilities
-Implementation-Version: 0.0.3-SNAPSHOT
+Implementation-Version: 1.0.0-SNAPSHOT
 Implementation-Vendor: OSFramework Project
 Implementation-Vendor-Id: org.osframework.util
 Bundle-ManifestVersion: 2
-Bundle-Name: OSFramework Common Utilities
+Bundle-Name: Common Utilities
 Bundle-SymbolicName: org.osframework.util.common-utils
-Bundle-Version: 0.0.3.SNAPSHOT
+Bundle-Version: 1.0.0.SNAPSHOT
 Bundle-Vendor: OSFramework Project
-Bundle-License: Apache License, Version 2.0
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
 Bundle-DocURL: http://common-utils.osframework.org
-Export-Package: org.osframework.util;version=0.0.3.SNAPSHOT
+Import-Package: org.apache.commons.lang;version="[2.6,3)"
+Export-Package: org.osframework.util;version="0.0.3.SNAPSHOT"
 
