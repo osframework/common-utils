@@ -33,12 +33,17 @@ import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 
 /**
- * A simple service-provider loading facility. Replicates the behavior of
- * {@linkplain java.util.ServiceLoader} in every way, except this class does not
- * instantiate the located provider classes. Deferred instantiation is of value
- * in situations where the client needs to perform additional inspection or
- * reflection of the loaded provider class prior to instantiation, or where the
- * provider class has no default constructor.
+ * A simple service-provider loading facility. This class replicates the
+ * behavior of {@linkplain java.util.ServiceLoader} in every way, with the
+ * exception that it does not instantiate the located provider classes. Deferred
+ * instantiation is of value in situations where the client needs to perform
+ * additional inspection or reflection of the loaded provider class prior to
+ * instantiation, or where the provider class has no default constructor.
+ * <p>The lazy iterator exposed by this class does not implicitly load located
+ * provider classes. Any class accessed via the iterator is only loaded upon the
+ * client performing some further process, such as invoking a
+ * <code>Constructor</code> or <code>Method</code> instance obtained from the
+ * provider class.</p> 
  *
  * @author <a href="mailto:dave@osframework.org">Dave Joyce</a>
  */

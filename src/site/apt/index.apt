@@ -3,11 +3,11 @@
 						----------------
 						Dave Joyce
 						----------------
-						2012-12-22
+						2013-01-02
 
 Introduction
 
-	Common Utilities is a library of several general utilities classes which are
+	Common Utilities is a library of several general utility classes which are
 	not specific to any domain and are intended for heavy reuse across multiple
 	OSFramework projects. The primary goal of these utility classes is to
 	provide implementations of known best practices that are not already offered

@@ -19,6 +19,7 @@ package org.osframework.util;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,17 +42,17 @@ import org.joda.time.format.ISODateTimeFormat;
  * 		</tr>
  * 		<tr>
  * 			<td><code>ISO-8601</code></td>
- * 			<td>yyyy-MM-dd</td>
+ * 			<td>yyyy-MM-dd</code></td>
  * 			<td><code>2012-12-25</code></td>
  * 		</tr>
  * 		<tr>
  * 			<td><code>US</code></td>
- * 			<td>MM/dd/yyyy</td>
+ * 			<td><code>MM/dd/yyyy</code></td>
  * 			<td><code>12/25/2012</code></td>
  * 		</tr>
  * 		<tr>
  * 			<td><code>US REVERSE</code></td>
- * 			<td>yyyy/MM/dd</td>
+ * 			<td><code>yyyy/MM/dd</code></td>
  * 			<td><code>2012/12/25</code></td>
  * 		</tr>
  * 	</table>
@@ -65,9 +66,20 @@ public final class DateUtil {
 	static final int DATE_US         = 1;
 	static final int DATE_US_REVERSE = 2;
 
-	static final String REGEX_DATE_ISO8601 = "\\d{4}-\\d{2}-\\d{2}";
-	static final String REGEX_DATE_US = "\\d{2}/\\d{2}/\\d{4}";
-	static final String REGEX_DATE_US_REVERSE = "\\d{4}/\\d{2}/\\d{2}";
+	/**
+	 * Regular expression for ISO-8601 date notation.
+	 */
+	public static final String REGEX_DATE_ISO8601 = "(\\d{4})-(\\d{2})-(\\d{2})";
+
+	/**
+	 * Regular expression for US standard date notation.
+	 */
+	public static final String REGEX_DATE_US = "(\\d{2})/(\\d{2})/(\\d{4})";
+
+	/**
+	 * Regular expression for US reverse date notation.
+	 */
+	public static final String REGEX_DATE_US_REVERSE = "(\\d{4})/(\\d{2})/(\\d{2})";
 
 	static final Pattern PATTERN_DATE_ISO8601 = Pattern.compile(REGEX_DATE_ISO8601);
 	static final Pattern PATTERN_DATE_US = Pattern.compile(REGEX_DATE_US);
@@ -86,7 +98,15 @@ public final class DateUtil {
 	private DateUtil() {}
 
 	/**
-	 * Determine if the given string is a valid date representation.
+	 * Determine if the given string is a valid date representation. A valid
+	 * date conforms to this policy:
+	 * <ul>
+	 * 	<li>All integer parts (year, month, day) are positive values</li>
+	 * 	<li>Month value is in range [1,12] inclusive</li>
+	 * 	<li>Day value is in range [1,31] inclusive</li>
+	 * </ul>
+	 * <p>This method is naiive with respect to the month: it makes no effort
+	 * to adjust the valid day range by given month.</p>
 	 * 
 	 * @param s string to be examined
 	 * @return <code>true</code> if string represents a date,
@@ -94,8 +114,35 @@ public final class DateUtil {
 	 */
 	public static boolean isDate(String s) {
 		boolean valid = !StringUtils.isBlank(s);
+		String trimmed = s.trim();
+		int idx = -1;
+		// 1. Does string match a known notation pattern?
 		if (valid) {
-			valid = (-1 != findArrayIndex(s));
+			idx = findArrayIndex(trimmed);
+			valid = (-1 != idx);
+		}
+		// 2. Do values fall within accepted ranges?
+		if (valid) {
+			Pattern p  = PATTERN_ARRAY[idx];
+			Matcher m = p.matcher(trimmed);
+			int year, month, day;
+			switch (idx) {
+			case DATE_ISO8601:
+			case DATE_US_REVERSE:
+				year = Integer.parseInt(m.group(1));
+				month = Integer.parseInt(m.group(2));
+				day = Integer.parseInt(m.group(3));
+				break;
+			case DATE_US:
+				year = Integer.parseInt(m.group(3));
+				month = Integer.parseInt(m.group(1));
+				day = Integer.parseInt(m.group(2));
+				break;
+			default:
+				year = month = day = -1;
+				break;
+			}
+			valid = ((0 <= year) && (1 <= month && month <= 12) && (1 <= day && day <= 31));
 		}
 		return valid;
 	}
@@ -154,13 +201,36 @@ public final class DateUtil {
 		return FORMAT_DATE_US_REVERSE.print(forceMidnight(new DateTime(d)));
 	}
 
+	/**
+	 * Parse the date represented by the specified string. This method handles
+	 * dates in these formats:
+	 * <ul>
+	 * 	<li>yyyyMMdd</li>
+	 * 	<li>yyyy-MM-dd</li>
+	 * 	<li>yyyy/MM/dd</li>
+	 * 	<li>MM/dd/yyyy</li>
+	 * </ul>
+	 * 
+	 * @param s date string to be parsed
+	 * @return represented date
+	 */
 	public static Date parseDate(String s) {
-		int idx = findArrayIndex(s);
-		if (-1 == idx) {
+		if (StringUtils.isBlank(s)) {
 			throw new IllegalArgumentException("Invalid date string: " + s);
 		}
-		DateTimeFormatter dtf = FORMAT_ARRAY[idx];
-		return dtf.parseDateTime(s).toDate();
+		String trimmed = s.trim();
+		Date d = null;
+		if (isNumber(trimmed)) {
+			d = FORMAT_DATE_ISO8601_INT.parseDateTime(trimmed).toDate();
+		} else {
+			int idx = findArrayIndex(trimmed);
+			if (-1 == idx) {
+				throw new IllegalArgumentException("Invalid date string: " + s);
+			}
+			DateTimeFormatter dtf = FORMAT_ARRAY[idx];
+			d = dtf.parseDateTime(trimmed).toDate();
+		}
+		return d;
 	}
 
 	static DateTime forceMidnight(DateTime dt) {
@@ -181,6 +251,18 @@ public final class DateUtil {
 			}
 		}
 		return idx;
+	}
+
+	private static boolean isNumber(String s) {
+		char[] chars = s.toCharArray();
+		boolean number = true;
+		for (char c : chars) {
+			if (!Character.isDigit(c)) {
+				number = false;
+				break;
+			}
+		}
+		return number;
 	}
 
 }
