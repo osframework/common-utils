@@ -50,6 +50,7 @@
 			<timezone>2</timezone>
 		</contributor>
 	</contributors>
+
 	<scm>
 		<url>git@github.com/osframework/common-utils.git</url>
 		<connection>scm:git:git://github.com/osframework/common-utils.git</connection>
