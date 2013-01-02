@@ -4,6 +4,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<groupId>org.osframework.util</groupId>
 	<artifactId>common-utils</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
@@ -11,7 +17,7 @@
 
 	<name>Common Utilities</name>
 	<description>General utility classes useful across OSFramework projects</description>
-	<url>http://common-utils.osframework.org/</url>
+	<url>http://osframework.org/projects/common-utils/</url>
 	<inceptionYear>2012</inceptionYear>
 
 	<organization>
@@ -21,8 +27,8 @@
 
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -45,7 +51,7 @@
 		</contributor>
 	</contributors>
 	<scm>
-		<url>https://github.com/osframework/common-utils</url>
+		<url>git@github.com/osframework/common-utils.git</url>
 		<connection>scm:git:git://github.com/osframework/common-utils.git</connection>
 		<developerConnection>scm:git:https://github.com/osframework/common-utils.git</developerConnection>
 	</scm>
@@ -57,37 +63,6 @@
 		<system>Jenkins</system>
 		<url>https://osframework.ci.cloudbees.com/</url>
 	</ciManagement>
-
-	<distributionManagement>
-		<repository>
-			<id>cloudbees-private-release-repository</id>
-			<name>OSFramework Project Release Repository (CloudBees)</name>
-			<url>https://repository-osframework.forge.cloudbees.com/release/</url>
-			<layout>default</layout>
-		</repository>
-		<snapshotRepository>
-			<id>cloudbees-private-snapshot-repository</id>
-			<name>OSFramework Project Snapshot Repository (CloudBees)</name>
-			<url>https://repository-osframework.forge.cloudbees.com/snapshot/</url>
-			<layout>default</layout>
-			<uniqueVersion>true</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>cloudbees-private-release-repository</id>
-			<name>OSFramework Project Release Repository (CloudBees)</name>
-			<url>http://repository-osframework.forge.cloudbees.com/release/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>oracleReleases</id>
-			<name>Oracle Released Java Packages</name>
-			<url>http://download.oracle.com/maven</url>
-			<layout>default</layout>
-		</repository>
-	</repositories>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -103,14 +78,12 @@
 		<!-- Plugin versions -->
 		<maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
-		<maven-jxr-plugin.version>2.3</maven-jxr-plugin.version>
-		<maven-pmd-plugin.version>2.7.1</maven-pmd-plugin.version>
-		<buildnumber-maven-plugin.version>1.2</buildnumber-maven-plugin.version>
 		<maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 		<maven-jar-plugin.version>2.4</maven-jar-plugin.version>
 		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
 		<maven-deploy-plugin.version>2.7</maven-deploy-plugin.version>
+		<maven-gpg-plugin.version>1.4</maven-gpg-plugin.version>
 		<wagon-webdav-jackrabbit.version>2.2</wagon-webdav-jackrabbit.version>
 	</properties>
 
@@ -165,24 +138,6 @@
 		</extensions>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>${buildnumber-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
-					<shortRevisionLength>10</shortRevisionLength>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
@@ -196,6 +151,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 			</plugin>
+			
+			<!-- Generate OSGi bundle manifest -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -228,7 +185,6 @@
 					<archive>
 						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
 						<manifestEntries>
-							<Implementation-Build>${buildNumber}</Implementation-Build>
 							<Build-Date>${buildTimestamp}</Build-Date>
 						</manifestEntries>
 					</archive>
@@ -263,6 +219,41 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.felix
+										</groupId>
+										<artifactId>
+											maven-bundle-plugin
+										</artifactId>
+										<versionRange>
+											[2.3.7,)
+										</versionRange>
+										<goals>
+											<goal>manifest</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<reporting>
@@ -279,4 +270,34 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${maven-gpg-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
