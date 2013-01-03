@@ -3,3 +3,7 @@
 
    This software contains code derived from the Oracle / Sun Microsystems
    Inc. java.util.ServiceLoader class.
+
+   This software uses the Joda-Time DateTime API. The original software is
+   available from
+      http://joda-time.sourceforge.net/
