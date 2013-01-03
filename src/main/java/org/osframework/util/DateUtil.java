@@ -125,24 +125,27 @@ public final class DateUtil {
 		if (valid) {
 			Pattern p  = PATTERN_ARRAY[idx];
 			Matcher m = p.matcher(trimmed);
-			int year, month, day;
-			switch (idx) {
-			case DATE_ISO8601:
-			case DATE_US_REVERSE:
-				year = Integer.parseInt(m.group(1));
-				month = Integer.parseInt(m.group(2));
-				day = Integer.parseInt(m.group(3));
-				break;
-			case DATE_US:
-				year = Integer.parseInt(m.group(3));
-				month = Integer.parseInt(m.group(1));
-				day = Integer.parseInt(m.group(2));
-				break;
-			default:
-				year = month = day = -1;
-				break;
+			valid = m.lookingAt();
+			if (valid) {
+				int year, month, day;
+				switch (idx) {
+				case DATE_ISO8601:
+				case DATE_US_REVERSE:
+					year = Integer.parseInt(m.group(1));
+					month = Integer.parseInt(m.group(2));
+					day = Integer.parseInt(m.group(3));
+					break;
+				case DATE_US:
+					year = Integer.parseInt(m.group(3));
+					month = Integer.parseInt(m.group(1));
+					day = Integer.parseInt(m.group(2));
+					break;
+				default:
+					year = month = day = -1;
+					break;
+				}
+				valid = ((0 <= year) && (1 <= month && month <= 12) && (1 <= day && day <= 31));
 			}
-			valid = ((0 <= year) && (1 <= month && month <= 12) && (1 <= day && day <= 31));
 		}
 		return valid;
 	}
@@ -245,7 +248,7 @@ public final class DateUtil {
 		int idx = -1;
 		for (int i = 0; i < PATTERN_ARRAY.length; i++) {
 			Pattern p = PATTERN_ARRAY[i];
-			if (p.matcher(s).matches()) {
+			if (p.matcher(s).lookingAt()) {
 				idx = i;
 				break;
 			}
