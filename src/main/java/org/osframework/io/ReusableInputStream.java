@@ -37,11 +37,28 @@ public class ReusableInputStream extends InputStream {
 	 * Constructor.
 	 *
 	 * @param input input stream to be made reusable
-	 * @throws IOException if an I/O error occurs 
+	 * @throws IllegalArgumentException if <code>input</code> is null
+	 * @throws IOException if an I/O error occurs
 	 */
 	public ReusableInputStream(InputStream input) throws IOException {
+		if (null == input) {
+			throw new IllegalArgumentException("input stream argument cannot be null");
+		}
 		this.input = input;
 		this.output = new ByteArrayOutputStream(input.available());
+	}
+
+	@Override
+	public int available() throws IOException {
+		int avail;
+		if (null != input) {
+			avail = input.available();
+		} else if (null != buffer) {
+			avail = buffer.remaining();
+		} else {
+			avail = 0;
+		}
+		return avail;
 	}
 
 	@Override
@@ -82,13 +99,21 @@ public class ReusableInputStream extends InputStream {
 		} else {
 			read = Math.min(length, buffer.remaining());
 			if (0 >= read) {
-				buffer.flip();
 				read = -1;
 			} else {
 				buffer.get(bytes, offset, read);
 			}
 		}
 		return read;
+	}
+
+	@Override
+	public synchronized void reset() throws IOException {
+		if (null == buffer) {
+			throw new IOException("Input stream not ready for reset");
+		} else {
+			buffer.flip();
+		}
 	}
 
 	@Override
