@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -34,7 +35,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * of date strings and <code>Date</code> objects. This class is capable of
  * validating and parsing date strings in these formats:
  * <blockquote>
- * 	<table border="0" cellspacing="3" cellpadding="0">
+ * 	<table border="1" cellspacing="3" cellpadding="0">
  * 		<tr>
  * 			<th align="left">Format</th>
  * 			<th align="left">Pattern</th>
@@ -61,6 +62,8 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author <a href="mailto:dave@osframework.org">Dave Joyce</a>
  */
 public final class DateUtil {
+
+	static final String NULL_ERROR = "Date argument cannot be null";
 
 	static final int DATE_ISO8601    = 0;
 	static final int DATE_US         = 1;
@@ -155,8 +158,10 @@ public final class DateUtil {
 	 * 
 	 * @param d date to be set to midnight
 	 * @return date representing midnight of the given date
+	 * @throws IllegalArgumentException if argument is null
 	 */
 	public static Date forceMidnight(Date d) {
+		Validate.notNull(d, NULL_ERROR);
 		return forceMidnight(new DateTime(d)).toDate();
 	}
 
@@ -165,8 +170,10 @@ public final class DateUtil {
 	 * 
 	 * @param d date to be converted to integer
 	 * @return int value of the given date (<code>yyyyMMdd</code>)
+	 * @throws IllegalArgumentException if argument is null
 	 */
 	public static int formatDateToInt(Date d) {
+		Validate.notNull(d, NULL_ERROR);
 		String s = FORMAT_DATE_ISO8601_INT.print(forceMidnight(new DateTime(d)));
 		return Integer.parseInt(s);
 	}
@@ -177,8 +184,10 @@ public final class DateUtil {
 	 * 
 	 * @param d date to be converted to string
 	 * @return ISO-8601 standard date string
+	 * @throws IllegalArgumentException if argument is null
 	 */
 	public static String formatDateToISO8601(Date d) {
+		Validate.notNull(d, NULL_ERROR);
 		return FORMAT_DATE_ISO8601.print(forceMidnight(new DateTime(d)));
 	}
 
@@ -188,8 +197,10 @@ public final class DateUtil {
 	 * 
 	 * @param d date to be converted to string
 	 * @return US standard convention date string
+	 * @throws IllegalArgumentException if argument is null
 	 */
 	public static String formatDateToUS(Date d) {
+		Validate.notNull(d, NULL_ERROR);
 		return FORMAT_DATE_US.print(forceMidnight(new DateTime(d)));
 	}
 
@@ -199,8 +210,10 @@ public final class DateUtil {
 	 * 
 	 * @param d date to be converted to string
 	 * @return US reverse convention date string
+	 * @throws IllegalArgumentException if argument is null
 	 */
 	public static String formatDateToUSReverse(Date d) {
+		Validate.notNull(d, NULL_ERROR);
 		return FORMAT_DATE_US_REVERSE.print(forceMidnight(new DateTime(d)));
 	}
 
@@ -216,6 +229,7 @@ public final class DateUtil {
 	 * 
 	 * @param s date string to be parsed
 	 * @return represented date
+	 * @throws IllegalArgumentException if specified string is empty
 	 */
 	public static Date parseDate(String s) {
 		if (StringUtils.isBlank(s)) {
