@@ -80,6 +80,7 @@
 		<commons-lang.version>2.6</commons-lang.version>
 		<joda-time.version>2.1</joda-time.version>
 		<testng.version>6.8</testng.version>
+		<testng-ext.version>1.0.0</testng-ext.version>
 
 		<!-- Plugin versions -->
 		<maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
@@ -112,6 +113,12 @@
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.osframework.testng</groupId>
+			<artifactId>testng-ext</artifactId>
+			<version>${testng-ext.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

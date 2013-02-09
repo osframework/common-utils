@@ -1,14 +1,37 @@
+/*
+ * File: DateUtilTest.java
+ * 
+ * Copyright 2012 OSFramework Project.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osframework.util;
 
-import static org.testng.Assert.*;
+import static org.osframework.testng.Assert.assertSameDay;
+import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
+/**
+ * Unit tests for <code>DateUtil</code>.
+ *
+ * @author <a href="mailto:dave@osframework.org">Dave Joyce</a>
+ */
 public class DateUtilTest {
 
 	@Test(dataProvider = "isDateData")
@@ -66,6 +89,18 @@ public class DateUtilTest {
 		assertEquals(actual, expected);
 	}
 
+	@Test(dataProvider = "parseDateData")
+	public void testParseDateValid(String input, Date expected) {
+		Date actual = DateUtil.parseDate(input);
+		assertSameDay(actual, expected);
+	}
+
+	@Test(dataProvider = "parseDateData",
+		  expectedExceptions=IllegalArgumentException.class)
+	public void testParseDateInvalid(String input) {
+		DateUtil.parseDate(input);
+	}
+
 	@DataProvider
 	public Object[][] isDateData() {
 		Object[] set1 = new Object[] { "2012-12-25", true };
@@ -120,6 +155,31 @@ public class DateUtilTest {
 			set2 = new Object[] { c2.getTime(), "2012/12/26" };
 			set3 = new Object[] { c3.getTime(), "2013/01/01" };
 			set4 = new Object[] { c4.getTime(), "2013/11/13" };
+		}
+		
+		return new Object[][] {
+			set1, set2, set3, set4,
+		};
+	}
+
+	@DataProvider
+	public Object[][] parseDateData(Method method) {
+		Calendar c1 = Calendar.getInstance();
+		c1.set(2012, Calendar.DECEMBER, 25);
+		
+		Object[] set1, set2, set3, set4;
+		set1 = set2 = set3 = set4 = null;
+		
+		if ("testParseDateValid".equals(method.getName())) {
+			set1 = new Object[] { "20121225", c1.getTime() };
+			set2 = new Object[] { "2012-12-25", c1.getTime() };
+			set3 = new Object[] { "12/25/2012", c1.getTime() };
+			set4 = new Object[] { "2012/12/25", c1.getTime() };
+		} else if ("testParseDateInvalid".equals(method.getName())) {
+			set1 = new Object[] { null };
+			set2 = new Object[] { "  " };
+			set3 = new Object[] { 1234 };
+			set4 = new Object[] { "12.25.2012" };
 		}
 		
 		return new Object[][] {
