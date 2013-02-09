@@ -75,9 +75,13 @@ public class DateUtilTest {
 		Object[] set5 = new Object[] { null, false };
 		Object[] set6 = new Object[] { "", false };
 		Object[] set7 = new Object[] { "  ", false };
+		Object[] set8 = new Object[] { "2012-02-29", true };
+		Object[] set9 = new Object[] { "2011-02-29", false };
+		Object[] set10 = new Object[] { "2012-11-31", false };
 		
 		return new Object[][] {
-			set1, set2, set3, set4, set5, set6, set7
+			set1, set2, set3, set4, set5,
+			set6, set7, set8, set9, set10
 		};
 	}
 

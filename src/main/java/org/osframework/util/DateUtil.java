@@ -105,11 +105,11 @@ public final class DateUtil {
 	 * date conforms to this policy:
 	 * <ul>
 	 * 	<li>All integer parts (year, month, day) are positive values</li>
+	 * 	<li>Year value is greater than or equal to 1583 (first full Gregorian year)</li>
 	 * 	<li>Month value is in range [1,12] inclusive</li>
 	 * 	<li>Day value is in range [1,31] inclusive</li>
+	 * 	<li>Day value does not exceed the maximum value for the month</li>
 	 * </ul>
-	 * <p>This method is naiive with respect to the month: it makes no effort
-	 * to adjust the valid day range by given month.</p>
 	 * 
 	 * @param s string to be examined
 	 * @return <code>true</code> if string represents a date,
@@ -117,14 +117,9 @@ public final class DateUtil {
 	 */
 	public static boolean isDate(String s) {
 		if (StringUtils.isBlank(s)) return false;
-		boolean valid = true;
 		String trimmed = s.trim();
-		int idx = -1;
-		// 1. Does string match a known notation pattern?
-		if (valid) {
-			idx = findArrayIndex(trimmed);
-			valid = (-1 != idx);
-		}
+		int idx = findArrayIndex(trimmed);
+		boolean valid = (-1 != idx);
 		// 2. Do values fall within accepted ranges?
 		if (valid) {
 			Pattern p  = PATTERN_ARRAY[idx];
@@ -148,7 +143,9 @@ public final class DateUtil {
 					year = month = day = -1;
 					break;
 				}
-				valid = ((0 <= year) && (1 <= month && month <= 12) && (1 <= day && day <= 31));
+				valid = ((1583 <= year) &&
+						 (1 <= month && month <= 12) &&
+						 (1 <= day && day <= (new DateTime(year, month, 14, 12, 0, 0, 0)).dayOfMonth().getMaximumValue()));
 			}
 		}
 		return valid;
