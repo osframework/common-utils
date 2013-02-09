@@ -17,10 +17,25 @@ public class DateUtilTest {
 		assertEquals(actual, expected);
 	}
 
+	@Test(expectedExceptions=IllegalArgumentException.class)
+	public void testForceMidnightNullArg() {
+		DateUtil.forceMidnight((Date)null);
+	}
+
+	@Test(expectedExceptions=IllegalArgumentException.class)
+	public void testFormatDateToIntNullArg() {
+		DateUtil.formatDateToInt(null);
+	}
+
 	@Test(dataProvider = "formatDateData")
 	public void testFormatDateToInt(Date input, int expected) {
 		int actual = DateUtil.formatDateToInt(input);
 		assertEquals(actual, expected);
+	}
+
+	@Test(expectedExceptions=IllegalArgumentException.class)
+	public void testFormatDateToISO8601NullArg() {
+		DateUtil.formatDateToISO8601(null);
 	}
 
 	@Test(dataProvider = "formatDateData")
@@ -29,10 +44,20 @@ public class DateUtilTest {
 		assertEquals(actual, expected);
 	}
 
+	@Test(expectedExceptions=IllegalArgumentException.class)
+	public void testFormatDateToUSNullArg() {
+		DateUtil.formatDateToUS(null);
+	}
+
 	@Test(dataProvider = "formatDateData")
 	public void testFormatDateToUS(Date input, String expected) {
 		String actual = DateUtil.formatDateToUS(input);
 		assertEquals(actual, expected);
+	}
+
+	@Test(expectedExceptions=IllegalArgumentException.class)
+	public void testFormatDateToUSReverseNullArg() {
+		DateUtil.formatDateToUSReverse(null);
 	}
 
 	@Test(dataProvider = "formatDateData")
@@ -47,9 +72,12 @@ public class DateUtilTest {
 		Object[] set2 = new Object[] { "12/25/2012", true };
 		Object[] set3 = new Object[] { "2012/12/25", true };
 		Object[] set4 = new Object[] { "25.12.2012", false };
+		Object[] set5 = new Object[] { null, false };
+		Object[] set6 = new Object[] { "", false };
+		Object[] set7 = new Object[] { "  ", false };
 		
 		return new Object[][] {
-			set1, set2, set3, set4,
+			set1, set2, set3, set4, set5, set6, set7
 		};
 	}
 

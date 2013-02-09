@@ -116,7 +116,8 @@ public final class DateUtil {
 	 *         <code>false</code> otherwise
 	 */
 	public static boolean isDate(String s) {
-		boolean valid = !StringUtils.isBlank(s);
+		if (StringUtils.isBlank(s)) return false;
+		boolean valid = true;
 		String trimmed = s.trim();
 		int idx = -1;
 		// 1. Does string match a known notation pattern?
